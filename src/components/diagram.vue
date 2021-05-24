@@ -9,7 +9,7 @@
               <p>Kenalan</p>
               <b-form-select
                 name="kenalan"
-                v-model="select_kenalan"
+                v-model="data_link"
                 :options="diagramData.nodeDataArray">
               </b-form-select>
               <p>Hubungan</p>
@@ -32,7 +32,6 @@ export default {
   name: "App",
   data () {
     return {
-      select_kenalan: '',
       diagramz: '',
       check: '',
       parent: '',
@@ -43,7 +42,7 @@ export default {
       diagramData: { 
         nodeDataArray: dataJson,
         linkDataArray: linkDataJson
-      },
+      }
     }
   },
   methods : {
@@ -111,12 +110,12 @@ export default {
         var counter = ++this.counter;
         this.diagramz.model.startTransaction();
         this.diagramz.model.addNodeData({ value: counter, key: counter, text: this.data_node });
-        this.diagramz.model.addLinkData({ from: this.select_kenalan, to: counter, text: this.data_hubungan });
+        this.diagramz.model.addLinkData({ from: this.data_link, to: counter, text: this.data_hubungan });
         this.diagramz.model.commitTransaction("added Node and Link");
         this.check = '';
       } else {
         this.diagramz.model.startTransaction();
-        this.diagramz.model.addLinkData({ from: this.parent.key, to: this.select_kenalan, text: this.data_hubungan});
+        this.diagramz.model.addLinkData({ from: this.parent.key, to: this.data_link, text: this.data_hubungan});
         this.diagramz.model.commitTransaction("added Node and Link");
         this.check = '';
       }
