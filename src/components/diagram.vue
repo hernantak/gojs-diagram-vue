@@ -17,7 +17,7 @@
             </b-row>
             <b-button v-on:click="addNode" variant="success" class="mb-4">Tambah</b-button>
             <div class="text-align: left;">
-              <p>Info: Untuk hapus link atau node cukup klik dan tekan "Delete" pada keyboard</p>
+              <p>Info: Untuk hapus link atau node cukup klik dan tekan "Delete" atau "Backspace" pada keyboard</p>
             </div>
       </div>
   </b-container>
