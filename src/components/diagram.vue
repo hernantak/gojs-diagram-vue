@@ -10,26 +10,24 @@
         </div>
       </div>
         <p>Kenalan</p>
-        <v-select
+        <b-form-select
           name="kenalan"
-          filled
           v-model="select_kenalan"
-          :options="diagramData.nodeDataArray"/>
+          :options="diagramData.nodeDataArray"></b-form-select>
         <p>Hubungan</p>
         <input v-model="data_hubungan" placeholder="Hubungan"><br><br>
         <button v-on:click="addNode">Add</button>
+
+        {{ select_kenalan }}
     </div>
   </div>
 </template>
 
 <script>
 import go from 'gojs'
-import vSelect from 'vue-select'
+// import vSelect from 'vue-select'
 import dataJson from './data/data.json'
 import linkDataJson from './data/linkdata.json'
-import '/node_modules/bootstrap/dist/css/bootstrap.css'
-import '/node_modules/bootstrap-vue/dist/bootstrap-vue.css'
-
 
 export default {
   name: "App",
@@ -50,7 +48,7 @@ export default {
     }
   },
   components: {
-    'v-select': vSelect
+    // 'v-select': vSelect
   },
   methods : {
     init () {
@@ -74,7 +72,22 @@ export default {
             { fill: $(go.Brush, "Linear", { 0: "rgb(254, 201, 0)", 1: "rgb(254, 162, 0)" }), stroke: "black" }),
           $(go.TextBlock,
             { font: "bold 10pt helvetica, bold arial, sans-serif", margin: 4 },
-            new go.Binding("text", "text"))
+            new go.Binding("text", "text")),
+
+            // {
+            //   contextMenu:     // define a context menu for each node
+            //     $("ContextMenu",  // that has one button
+            //       $("ContextMenuButton",
+            //         {
+            //           "ButtonBorder.fill": "white",
+            //           "_buttonFillOver": "skyblue"
+            //         },
+            //         $(go.TextBlock, "Change Color"),
+            //         { click: this.changeColor })
+            //       // more ContextMenuButtons would go here
+            //     )  // end Adornment
+            // }
+
         );
 
       myDiagram.linkTemplate =
@@ -104,6 +117,26 @@ export default {
       this.diagramz = myDiagram;
     },
 
+    // changeColor: function() {
+      // this.diagramz.commit(function(d) {
+      //   // get the context menu that holds the button that was clicked
+      //   var contextmenu = obj.part;
+      //   // get the node data to which the Node is data bound
+      //   var nodedata = contextmenu.data;
+      //   // compute the next color for the node
+      //   var newcolor = "lightblue";
+      //   switch (nodedata.color) {
+      //     case "lightblue": newcolor = "lightgreen"; break;
+      //     case "lightgreen": newcolor = "lightyellow"; break;
+      //     case "lightyellow": newcolor = "orange"; break;
+      //     case "orange": newcolor = "lightblue"; break;
+      //   }
+      //   // modify the node data
+      //   // this evaluates data Bindings and records changes in the UndoManager
+      //   d.model.set(nodedata, "color", newcolor);
+      // }, "changed color");
+    // },    
+
     filterData() {
       // check for node & link
       let data = this.diagramData.nodeDataArray;
@@ -118,14 +151,15 @@ export default {
     addNode: function() {
       this.filterData();
       if(!this.check) {
+        var counter = ++this.counter;
         this.diagramz.model.startTransaction();
-        this.diagramz.model.addNodeData({ label: this.data_node, key: ++this.counter, text: this.data_node });
-        this.diagramz.model.addLinkData({ from: this.select_kenalan.key, to: this.counter++, text: this.data_hubungan });
+        this.diagramz.model.addNodeData({ value: counter, key: counter, text: this.data_node });
+        this.diagramz.model.addLinkData({ from: this.select_kenalan, to: counter, text: this.data_hubungan });
         this.diagramz.model.commitTransaction("added Node and Link");
         this.check = '';
       } else {
         this.diagramz.model.startTransaction();
-        this.diagramz.model.addLinkData({ from: this.parent.key, to: this.select_kenalan.key, text: this.data_hubungan});
+        this.diagramz.model.addLinkData({ from: this.parent.key, to: this.select_kenalan, text: this.data_hubungan});
         this.diagramz.model.commitTransaction("added Node and Link");
         this.check = '';
       }
