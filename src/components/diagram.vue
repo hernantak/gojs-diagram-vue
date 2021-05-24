@@ -1,31 +1,30 @@
 <template>
-
-  <div id="app">
-    <div class="vx-row">
-      <div id="myDiagramDiv"></div>
-      <div class="vx-row">
-        <div class="vx-col w-full">
-          <p>Nama</p>
-          <input v-model="data_node" placeholder="Nama">
-        </div>
+  <b-container >
+      <div id="app">
+        <h3>Diagram Hubungan </h3>
+          <div id="myDiagramDiv"></div>
+            <b-row cols="2" class="mb-4">
+              <p>Nama</p>
+              <input v-model="data_node" placeholder="Nama">
+              <p>Kenalan</p>
+              <b-form-select
+                name="kenalan"
+                v-model="select_kenalan"
+                :options="diagramData.nodeDataArray">
+              </b-form-select>
+              <p>Hubungan</p>
+              <input v-model="data_hubungan" placeholder="Hubungan"><br><br>
+            </b-row>
+            <b-button v-on:click="addNode" variant="success" class="mb-4">Tambah</b-button>
+            <div class="text-align: left;">
+              <p>Info: Untuk hapus link atau node cukup klik dan tekan "Delete" pada keyboard</p>
+            </div>
       </div>
-        <p>Kenalan</p>
-        <b-form-select
-          name="kenalan"
-          v-model="select_kenalan"
-          :options="diagramData.nodeDataArray"></b-form-select>
-        <p>Hubungan</p>
-        <input v-model="data_hubungan" placeholder="Hubungan"><br><br>
-        <button v-on:click="addNode">Add</button>
-
-        {{ select_kenalan }}
-    </div>
-  </div>
+  </b-container>
 </template>
 
 <script>
 import go from 'gojs'
-// import vSelect from 'vue-select'
 import dataJson from './data/data.json'
 import linkDataJson from './data/linkdata.json'
 
@@ -40,15 +39,12 @@ export default {
       data_node: '',
       data_link: '',
       data_hubungan: '',
-      counter: 4,
+      counter: 3,
       diagramData: { 
         nodeDataArray: dataJson,
         linkDataArray: linkDataJson
       },
     }
-  },
-  components: {
-    // 'v-select': vSelect
   },
   methods : {
     init () {
@@ -62,7 +58,6 @@ export default {
             $(go.ForceDirectedLayout,  // automatically spread nodes apart
               { maxIterations: 200, defaultSpringLength: 30, defaultElectricalCharge: 100 })
           });
-
       // define a simple Node template
       myDiagram.nodeTemplate =
         $(go.Node, "Auto",  // the whole node panel
@@ -73,23 +68,7 @@ export default {
           $(go.TextBlock,
             { font: "bold 10pt helvetica, bold arial, sans-serif", margin: 4 },
             new go.Binding("text", "text")),
-
-            // {
-            //   contextMenu:     // define a context menu for each node
-            //     $("ContextMenu",  // that has one button
-            //       $("ContextMenuButton",
-            //         {
-            //           "ButtonBorder.fill": "white",
-            //           "_buttonFillOver": "skyblue"
-            //         },
-            //         $(go.TextBlock, "Change Color"),
-            //         { click: this.changeColor })
-            //       // more ContextMenuButtons would go here
-            //     )  // end Adornment
-            // }
-
         );
-
       myDiagram.linkTemplate =
         $(go.Link,  // the whole link panel
           $(go.Shape,  // the link shape
@@ -115,39 +94,17 @@ export default {
 
       myDiagram.model = new go.GraphLinksModel(this.diagramData.nodeDataArray, this.diagramData.linkDataArray)
       this.diagramz = myDiagram;
-    },
-
-    // changeColor: function() {
-      // this.diagramz.commit(function(d) {
-      //   // get the context menu that holds the button that was clicked
-      //   var contextmenu = obj.part;
-      //   // get the node data to which the Node is data bound
-      //   var nodedata = contextmenu.data;
-      //   // compute the next color for the node
-      //   var newcolor = "lightblue";
-      //   switch (nodedata.color) {
-      //     case "lightblue": newcolor = "lightgreen"; break;
-      //     case "lightgreen": newcolor = "lightyellow"; break;
-      //     case "lightyellow": newcolor = "orange"; break;
-      //     case "orange": newcolor = "lightblue"; break;
-      //   }
-      //   // modify the node data
-      //   // this evaluates data Bindings and records changes in the UndoManager
-      //   d.model.set(nodedata, "color", newcolor);
-      // }, "changed color");
-    // },    
-
+    },    
     filterData() {
       // check for node & link
       let data = this.diagramData.nodeDataArray;
       for(let i of data) {
-        if(this.data_node === i.text) {
+        if(this.data_node.toLowerCase() === i.text.toLowerCase()) {
           this.parent = i;
           this.check = i.key;
         } 
       }
     },
-
     addNode: function() {
       this.filterData();
       if(!this.check) {
@@ -175,20 +132,5 @@ export default {
 #myDiagramDiv {
   width: 100%;
   height: 500px;
-}
-
-.style-chooser .vs__search::placeholder,
-.style-chooser .vs__dropdown-toggle,
-.style-chooser .vs__dropdown-menu {
-  background: #dfe5fb;
-  border: none;
-  color: #394066;
-  text-transform: lowercase;
-  font-variant: small-caps;
-}
-
-.style-chooser .vs__clear,
-.style-chooser .vs__open-indicator {
-  fill: #394066;
 }
 </style>
